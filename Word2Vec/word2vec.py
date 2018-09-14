@@ -12,8 +12,8 @@ class Config():
     window_size = 1
     n_features = 128
     batch_size = 128
-    vocabulary_size = 10000
-    lr = 0.005
+    vocabulary_size = 50000
+    lr = 0.5
     num_sampled = 64
     epoch = 100000
     visual_fld = 'visualization'

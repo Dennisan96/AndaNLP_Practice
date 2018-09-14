@@ -28,7 +28,8 @@ def build_vocab(words, vocab_size, visual_fld):
     dictionary = dict()
     count = [('UNK', -1)]  # QUESTION: why use "UNK" and -1
     index = 0
-    count.extend(Counter(words).most_common(vocab_size - 1))
+    count.extend(Counter(words).most_common(vocab_size - 1+100)) # single letter word doesn't count
+    count = count[100:] # the most frequent word are mostly connecting words
 
     for word, _ in count:
         dictionary[word] = index

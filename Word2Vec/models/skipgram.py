@@ -10,18 +10,6 @@ class Skipgram:
         self.labels = labels_tensor
         self.build()
 
-
-    def add_placeholders(self):
-        # Input is a index of center words
-        self.inputs_placeholder = tf.placeholder(tf.int32, shape=(self.config.batch_size))
-
-        # Label is a index of target_words
-        self.labels_placeholder = tf.placeholder(tf.int32, shape=(self.config.batch_size, 1))
-
-    def create_feed_dict(self, inputs_batch, labels_batch=None):
-        feed_dict = {self.inputs_placeholder: inputs_batch, self.labels_placeholder: labels_batch}
-        return feed_dict
-
     def add_training_op(self):
         embedding = tf.Variable(tf.random_uniform([self.config.vocabulary_size, self.config.n_features], -1, 1))
 
