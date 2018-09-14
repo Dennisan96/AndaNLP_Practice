@@ -17,6 +17,7 @@ class Config():
     num_sampled = 64
     epoch = 100000
     visual_fld = 'visualization'
+    local_data_dest = 'data/text8.zip'
 
 config = Config() # create configeration object to store hyperparameters
 
@@ -46,7 +47,7 @@ def run_word2vec(train_data):
 
 
 def gen():
-    yield from batch_gen(config.vocabulary_size, config.batch_size, config.window_size, config.visual_fld)
+    yield from batch_gen(config.local_data_dest, config.vocabulary_size, config.batch_size, config.window_size, config.visual_fld)
 
 
 def main():

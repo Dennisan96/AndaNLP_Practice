@@ -64,8 +64,8 @@ def generate_sample(index_words, window_size):
 
 
 
-def batch_gen(vocab_size, batch_size, skip_window, visual_fld):
-    local_dest = '/Users/anda/Desktop/AndaNLP_Practice/Word2Vec/data/text8.zip' # TODO: replace the address
+def batch_gen(local_dest, vocab_size, batch_size, skip_window, visual_fld):
+    #local_dest = '/Users/anda/Desktop/AndaNLP_Practice/Word2Vec/data/text8.zip' # TODO: replace the address
     # Here omit the downloaded part as the data will contain in the folder
     words = read_data(local_dest)
     dictionary, _ = build_vocab(words, vocab_size, visual_fld)
