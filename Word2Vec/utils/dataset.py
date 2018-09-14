@@ -8,7 +8,10 @@ import numpy as np
 # import chazutsu
 from nltk import tokenize
 import zipfile
-import tools
+import utils.tools
+import os
+from collections import Counter
+import random
 
 
 # the following funcitons using reference from stanford university cs20
@@ -19,7 +22,7 @@ def read_data(file_path):
     return words
 
 def build_vocab(words, vocab_size, visual_fld):
-    tools.safe_mkdir(visual_fld)
+    utils.tools.safe_mkdir(visual_fld)
     file = open(os.path.join(visual_fld, 'vocab.tsv'), 'w')
 
     dictionary = dict()
@@ -42,7 +45,7 @@ def convert_words_to_index(words, dictionary):
     word in ranked by its occurance
     """
 
-    return [dictionary[word] for word in words if word in dictionary else 0]
+    return [dictionary[word] if word in dictionary else 0 for word in words]
 
 def generate_sample(index_words, window_size):
     """ form training paris according to skip-gram model"""
@@ -55,20 +58,19 @@ def generate_sample(index_words, window_size):
             yield center, target
 
         # get a random target after the center word
-        for target in index_word[index+1:index+context+1]:
+        for target in index_words[index+1:index+context+1]:
             yield center, target
 
 
 
 def batch_gen(vocab_size, batch_size, skip_window, visual_fld):
-    local_dest = 'data/text8.zip'
+    local_dest = '/Users/anda/Desktop/AndaNLP_Practice/Word2Vec/data/text8.zip' # TODO: replace the address
     # Here omit the downloaded part as the data will contain in the folder
     words = read_data(local_dest)
     dictionary, _ = build_vocab(words, vocab_size, visual_fld)
     index_words = convert_words_to_index(words, dictionary)
     del words
     single_gen = generate_sample(index_words, skip_window)
-
     while True:
         center_batch = np.zeros(batch_size, dtype=np.int32)
         target_batch = np.zeros([batch_size, 1])
@@ -76,9 +78,7 @@ def batch_gen(vocab_size, batch_size, skip_window, visual_fld):
             center_batch[index], target_batch[index] = next(single_gen)
         yield center_batch, target_batch
 
-
 def main():
     pass
-
 if __name__ == '__main__':
     main()
