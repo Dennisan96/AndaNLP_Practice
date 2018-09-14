@@ -1,7 +1,7 @@
 import tensorflow as tf
 from sklearn import preprocessing
 
-class Skimgram:
+class Skipgram:
 
     def __init__(self, config):
         self.config = config

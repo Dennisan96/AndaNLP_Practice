@@ -3,7 +3,7 @@ This is a "toy" model for word2vec using Skim-gram model
 """
 
 import tensorflow as tf
-from utils.dataset import load_data
+from utils.dataset import batch_gen
 from models.skimgram import Skimgram
 
 
@@ -13,33 +13,34 @@ class Config():
     batch_size = 128
     vocabulary_size = 10000
     lr = 0.005
+    num_sampled = 64
+    epoach = 10000
+    visual_fld = 'visualization'
 
-def run(train_data):
-    config = Config()
+config = Config() # create configeration object to store hyperparameters
+
+def run_word2vec(train_data):
+    iterator = train_data.make_initializable_iterator()
+    center_words, target_words = iterator.get_next()
+
     model = Skimgram(config)
-
-
     init = tf.global_variables_initializer()
     with tf.Session() as sess:
         sess.run(init)
+        sess.run(iterator.initializer)
 
         average_loss = 0.0
-        for step, batch_data in enumerate(train_data):
-            feed_dict = model.create_feed_dict(batch_data)
-            _, loss_val = sess.run([model.train_op, model.loss], feed_dict)
-            average_loss += loss_val
-
-            if step%1000 == 0:
-                if step > 0:
-                    average_loss /= 1000
-                print("loss at iter", step, ":", average_loss)
 
 
+
+def gen():
+    yield from batch_gen(config.vocabulary_size, config.batch_size, config.window_size, config.visual_fld)
 
 
 def main():
-    train_data = load_data()
-    run(train_data)
+    config = Config()
+    train_dataset = tf.data.Dataset.from_generator(gen, (tf.int32, tf.int32), tf.TensorShape([config.batch_size]), tf.TensorShape([config.batch_size, 1]))
+    run_word2vec(train_dataset)
 
 
 if __name__ == '__main__':
