@@ -11,9 +11,9 @@ class Skipgram:
         self.build()
 
     def add_training_op(self):
-        embedding = tf.Variable(tf.random_uniform([self.config.vocabulary_size, self.config.n_features], -1, 1))
+        embeddings = tf.Variable(tf.random_uniform([self.config.vocabulary_size, self.config.n_features], -1, 1))
 
-        batch_embedding = tf.nn.embedding_lookup(embedding, self.input)
+        batch_embedding = tf.nn.embedding_lookup(embeddings, self.input)
 
         nceweights = tf.Variable(tf.truncated_normal([self.config.vocabulary_size, self.config.n_features], stddev=1.0/math.sqrt(self.config.n_features)))
 
