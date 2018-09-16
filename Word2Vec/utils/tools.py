@@ -8,6 +8,7 @@ def safe_mkdir(dir):
     except:
         pass
 
+
 def visualizeWord(embedding, words, dh):
     wordsIndex = dh.convert_words_to_index(words)
     visualizeVecs = [embedding[i] for i in wordsIndex]
@@ -24,4 +25,5 @@ def visualizeWord(embedding, words, dh):
     plt.xlim((np.min(coord[:,0]), np.max(coord[:,0])))
     plt.ylim((np.min(coord[:,1]), np.max(coord[:,1])))
 
-    plt.savefig('q3_word_vectors.png')
+    plt.savefig('./visualization/word_vectors.png')
+    print('PNG save under ./visualisation')

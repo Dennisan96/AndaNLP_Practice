@@ -10,8 +10,10 @@ class Skipgram:
         self.labels = labels_tensor
         self.build()
 
+
     def add_training_op(self):
-        embeddings = tf.Variable(tf.random_uniform([self.config.vocabulary_size, self.config.n_features], -1, 1))
+        embeddings = tf.get_variable('embeddings', initializer=tf.random_uniform([self.config.vocabulary_size, self.config.n_features], -1, 1))
+        #embeddings = tf.Variable(tf.random_uniform([self.config.vocabulary_size, self.config.n_features], -1, 1), name='embeddings')
 
         batch_embedding = tf.nn.embedding_lookup(embeddings, self.input)
 
@@ -29,6 +31,7 @@ class Skipgram:
         train_op = tf.train.GradientDescentOptimizer(self.config.lr).minimize(loss)
 
         return loss, train_op
+
 
     def build(self):
         self.loss, self.train_op = self.add_training_op()

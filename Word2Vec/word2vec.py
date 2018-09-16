@@ -7,6 +7,8 @@ from utils.dataset import DataHandler
 from models.skipgram import Skipgram
 from utils.tools import visualizeWord
 import matplotlib
+import numpy as np
+from tensorflow.python.tools import inspect_checkpoint as chkp
 
 
 import os
@@ -16,17 +18,18 @@ SKIP_STEP = 1000
 
 class Config():
     window_size = 1
-    n_features = 128
+    n_features = 150
     batch_size = 128
-    vocabulary_size = 20000
-    lr = 0.5
-    num_sampled = 64
-    epoch = 10000
+    vocabulary_size = 50000
+    lr = 0.8
+    num_sampled = 120
+    epoch = 100000
     visual_fld = 'visualization'
     local_data_dest = 'data/text8.zip'
 
 
 config = Config() # create configeration object to store hyperparameters
+
 
 def run_word2vec(train_data):
     iterator = train_data.make_initializable_iterator()
@@ -35,7 +38,7 @@ def run_word2vec(train_data):
     model = Skipgram(config, center_words, target_words)
     init = tf.global_variables_initializer()
 
-    saver = tf.train.Saver() # TODO: Save the model embeddings
+    saver = tf.train.Saver()
 
     with tf.Session() as sess:
         sess.run(init)
@@ -54,27 +57,37 @@ def run_word2vec(train_data):
             except tf.errors.OutOfRangeError:
                 sess.run(iterator.initializer)
 
-        return model.embeddings
+        save_path = saver.save(sess, './saved/model.ckpt')
+        print("The model is saved under path:", save_path)
 
-
-# def gen():
-#     yield from batch_gen(config.local_data_dest, config.vocabulary_size, config.batch_size, config.window_size, config.visual_fld)
 
 def main():
+    # create a Data Handle to manage the training data
     dh = DataHandler(config.local_data_dest, config.vocabulary_size, config.visual_fld, config.window_size, config.batch_size)
 
     dataset = tf.data.Dataset.from_generator(dh.batch_gen,
                                 (tf.int32, tf.int32),
                                 (tf.TensorShape([config.batch_size]), tf.TensorShape([config.batch_size, 1])))
 
-    final_embeddings = run_word2vec(dataset)
+    # start training the model
+    run_word2vec(dataset)
 
+    # restore saved model to get final words vectors
+    tf.reset_default_graph()
+    embed = tf.get_variable("embeddings", shape=[config.vocabulary_size, config.n_features])
+    saver = tf.train.Saver()
+    with tf.Session() as sess:
+        saver.restore(sess, './saved/model.ckpt')
+        final_embeddings = embed.eval()
+
+
+    # pick some words to visulize on a graph
     words_to_visualize = ['university', 'government', 'century', 'life', 'year', 'day', 'national'
-                    'french', 'britsh', 'same', 'another', 'german', 'music', 'great', 'very'
+                    'french', 'british', 'same', 'another', 'music', 'great', 'very'
                     'modern', 'common']
 
     visualizeWord(final_embeddings, words_to_visualize, dh)
-    # print(final_embeddings.shape)
+
 
 if __name__ == '__main__':
     main()

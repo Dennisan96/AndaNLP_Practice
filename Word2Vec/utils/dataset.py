@@ -77,12 +77,6 @@ class DataHandler():
 
 
     def batch_gen(self):
-        #local_dest = '/Users/anda/Desktop/AndaNLP_Practice/Word2Vec/data/text8.zip' # TODO: replace the address
-        # Here omit the downloaded part as the data will contain in the folder
-        # words = read_data(local_dest)
-        # dictionary, _ = build_vocab(words, vocab_size, visual_fld)
-        # index_words = convert_words_to_index(words, dictionary)
-        # del words
         single_gen = self.generate_sample(self.index_words, self.skip_window)
         while True:
             center_batch = np.zeros(self.batch_size, dtype=np.int32)
