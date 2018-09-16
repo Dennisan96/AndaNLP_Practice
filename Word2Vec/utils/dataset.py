@@ -5,8 +5,6 @@ This python code primily conerned with managing dataset
 
 import tensorflow as tf
 import numpy as np
-# import chazutsu
-from nltk import tokenize
 import zipfile
 import utils.tools
 import os
